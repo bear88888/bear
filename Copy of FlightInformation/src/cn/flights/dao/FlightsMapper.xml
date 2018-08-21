@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+    
+<mapper namespace="cn.flights.dao.FlightsMapper">
+
+	 <resultMap type="Flights" id="flightsList">
+	 	<id property="id" column="id"/>
+	 	<result property="airline" column="airline"/>
+	 	<result property="type" column="type"/>
+	 	<result property="takeoffTime" column="takeoffTime"/>
+	 	<result property="landingTime" column="landingTime"/>
+	 	<result property="flightTime" column="flightTime"/>
+	 	<result property="referencePrice" column="referencePrice"/>
+	 	
+	 	<association property="flight_Tickets" javaType="Flight_Tickets">
+	 		<result property="sellCompany" column="sellCompany"/>
+	 		<result property="ticketPrice" column="ticketPrice"/>
+	 	</association>
+	 	
+	 	<association property="airports" javaType="Airports">
+	 		<result property="airportName" column="a1"/>
+	 		<result property="airportName1" column="a2"/>
+	 	</association>
+	 	
+	 </resultMap>
+	 
+	<select id="getFlightsList" resultMap="flightsList" >
+	SELECT f.*,t.airportName as a1,l.airportName as a2,ft.ticketPrice,ft.sellCompany FROM
+	(SELECT id,airportName FROM airports WHERE cityName = #{airports.cityName}) AS t,
+	(SELECT id,airportName FROM airports WHERE cityName = #{airports1.cityName}) AS l,
+	flights AS f,
+	`flight_tickets` AS ft
+	WHERE t.id=f.`takeoffAirportId` 
+	AND l.id=f.`landingAirportId` 
+	AND f.`id`=ft.flightId
+    </select>
+</mapper>
